@@ -48,16 +48,21 @@ export default defineComponent({
 
     // Функция для выполнения запроса при изменении значения searchInput с задержкой
     const debouncedSearchUsers = debounce(async (searchInput: string) => {
-      if (searchInput === '') {
+      // Разбиваем строку по запятым и удаляем пустые строки
+      const searchArray = searchInput
+        .split(',')
+        .map((item) => item.trim())
+        .filter(Boolean);
+
+      if (searchArray.length === 0) {
         store.commit('setUsers', []);
         error.value = null;
+        loading.value = false; // Устанавливаем loading в false, чтобы скрыть сообщение о загрузке
         return;
       }
 
       loading.value = true;
       error.value = null;
-
-      const searchArray = searchInput.split(',').map((item) => item.trim());
 
       const isNumeric = /^\d+$/.test(searchArray[0]);
 
